@@ -7,16 +7,17 @@ const bodyParser = require("body-parser")
 const jwt = require("jsonwebtoken")
 const express = require("express")
 const app = express()
+const dir = require("../root").dir
 
 class Index {
 
-    static Setting = JSON.parse(fs.readFileSync("./etc/secrets" + "/config.json"))
+    static Setting = JSON.parse(fs.readFileSync(dir + "/etc/secrets/config.json"))
     static unauthorized = res => res.status(401).send("Authentication failed")
 
     constructor(process) {
         this.port = process.env.PORT || 5000
         this.client = new MongoClient(Index.Setting.Mongodb.Url, {
-            tlsCertificateKeyFile: "./etc/secrets/cert.pem",
+            tlsCertificateKeyFile: dir + "/etc/secrets/cert.pem",
             serverApi: ServerApiVersion.v1
         })
         this.client.connect()
@@ -101,6 +102,10 @@ class Index {
         })
 
         //NotFound
+        api.use((req, res, next) => {
+            res.status(404).send('Not Found')
+        })
+
         app.use((req, res, next) => {
             res.send('<html><body>Visit at <a href="https://27hohuuduc.github.io">DucHoBlog</a></body></html>')
         })

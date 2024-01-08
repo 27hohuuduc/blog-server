@@ -1,69 +1,29 @@
-const fs = require('fs')
-const { Octokit } = require("octokit")
+const { Octokit } = require('@octokit/rest');
+const env = require("./Environment")
 
-const config = JSON.parse(fs.readFileSync('config.json')).GitHub
+class GithubApi {
+    constructor() {
+        this.octokit = new Octokit({
+            auth: env.GitHub.token,
+        })
+    }
 
-const octokit = new Octokit({
-    auth: config.token
-})
-
-/**
- * Request Get to GitHub
- * @param {config} config
- * @returns {Object<JSON>} Data
-*/
-const Get = async () => {
-    const res = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
-        owner: config.owner,
-        repo: config.repo,
-        path: 'README.md',
-        committer: {
-            name: config.name,
-            email: config.email
-        }
-    })
-    return res.data
+    upload(name, buffer, callback) {
+        const content = buffer.toString('base64')
+        this.octokit.repos.createOrUpdateFileContents({
+            owner: env.GitHub.owner,
+            repo: env.GitHub.repo,
+            branch: env.GitHub.branch,
+            path: name,
+            sha: '64fe6c9dd8d53901975881d2eae51b733c86463b',
+            content: content,
+            message: env.GitHub.message
+        }).then(x => {
+            callback(x)
+        }).catch(x => {
+            console.log(x)
+        })
+    }
 }
 
-/**
- * Request Put to GitHub
- * @param {string} filename 
- * @param {string} content
- * @param {config} config 
- * @returns {Object<JSON>} Data
-*/
-const Put = async (filename, content, config) => {
-    const res = await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
-        owner: config.owner,
-        repo: config.repo,
-        path: filename,
-        message: config.commit,
-        committer: {
-            name: config.name,
-            email: config.email
-        },
-        content: btoa(content)
-    })
-    return res.data
-}
-
-const Delete = async () => {
-    const res = await octokit.request('DELETE /repos/{owner}/{repo}/contents/{path}', {
-        owner: config.owner,
-        repo: config.repo,
-        path: filename,
-        message: 'Last commit',
-        committer: {
-            name: '27hohuuduc',
-            email: '27hohuuduc@gmail.com'
-        },
-        sha: '0d5a690c8fad5e605a6e8766295d9d459d65de42'
-    })
-    return res.data
-}
-
-module.exports = {
-    Get,
-    Put,
-    Delete
-}
+module.exports = GithubApi

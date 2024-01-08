@@ -1,3 +1,5 @@
-# PublicWeb
+# Personal Blog
 
-Tạm vậy, nào rảnh viết thêm.
+## Usage
+
+1. yarn install

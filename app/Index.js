@@ -10,7 +10,6 @@ const api = require("./Routers/Api")
 class Index {
 
     static instance
-    static unauthorized = res => res.status(401).send("Authentication failed")
 
     constructor(process) {
         Index.instance = this
@@ -23,7 +22,7 @@ class Index {
         const database = this.client.db(env.Mongodb.Database)
         this.dUsers = database.collection("User")
         this.dContents = database.collection("Contents")
-        this.run().then(e => console.log()).catch(console.dir)
+        this.run().then(e => console.log("Connected MongoDB")).catch(console.dir)
     }
 
     async run() {
@@ -53,6 +52,18 @@ class Index {
 
         app.use((req, res, next) => {
             res.send('<html><body>Visit at <a href="https://27hohuuduc.github.io">DucHoBlog</a></body></html>')
+        })
+
+        app.use((err, req, res, next) => {
+            console.log(err)
+            switch (err.message) {
+                case "Unauthorized":
+                    res.status(401).send("Authentication failed")
+                    break
+                default:
+                    res.status(500).send("Something failed!")
+            }
+            return
         })
 
         //Start

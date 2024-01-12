@@ -37,17 +37,15 @@ api.post("/basic", async (req, res) => {
     verify(res, { pass: req.body.password })
 })
 
-api.post("/google", async (req, res) => {
+api.post("/google", async (req, res, next) => {
     try {
         const ticket = await oAuth2Client.verifyIdToken({
             idToken: req.body.token
         })
 
         this.verify(res, { google: ticket.getUserId() })
-    }
-    catch {
-        Index.unauthorized(res)
-        return
+    } catch {
+        next(new Error("Unauthorized"))
     }
 })
 

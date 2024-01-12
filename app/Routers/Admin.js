@@ -1,5 +1,7 @@
 const express = require("express")
 const jwt = require("jsonwebtoken")
+const env = require("../Environment")
+const github = require("../GitHubApi")()
 
 let admin = express.Router()
 //Verification
@@ -7,29 +9,26 @@ admin.use((req, res, next) => {
     try {
         const auth = req.headers.authorization
         if (!auth.includes("Bearer ")) {
-            Index.unauthorized(res)
-            return
+            next(new Error("Unauthorized"))
         }
         const token = auth.split(" ")[1]
-        req.token = jwt.verify(token, Index.Setting.SecretKey)
+        req.token = jwt.verify(token, env.SecretKey)
         next()
     }
     catch (e) {
-        Index.unauthorized(res)
-        return
+        next(new Error("Unauthorized"))
     }
 })
 
-// admin.post("/upload", (req, res) => {
-//     console.log()
-// const GithubApi = require('./app/GitHub')
-// const github = new GithubApi()
+admin.post("/content", (req, res) => {
+    console.log(req.headers)
 
 // const s = 'Heello'
 // github.upload('test.txt', Buffer.from(s), (x) => {
     
 // })
-// })
+    res.send("ok")
+})
 
 admin.get("/test", (req, res) => {
     res.json({ role: req.token.role })

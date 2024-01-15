@@ -8,14 +8,14 @@ class GithubApi {
         })
     }
 
-    upload(name, buffer, callback) {
+    upload(name, buffer, callback, sha = "") {
         const content = buffer.toString('base64')
         this.octokit.repos.createOrUpdateFileContents({
             owner: env.GitHub.owner,
             repo: env.GitHub.repo,
             branch: env.GitHub.branch,
             path: name,
-            sha: '64fe6c9dd8d53901975881d2eae51b733c86463b',
+            sha: sha,
             content: content,
             message: env.GitHub.message
         }).then(x => {
@@ -26,4 +26,6 @@ class GithubApi {
     }
 }
 
-module.exports = GithubApi
+const Github = () => new GithubApi()
+
+module.exports = Github

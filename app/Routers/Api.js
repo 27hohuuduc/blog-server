@@ -5,12 +5,14 @@ const oAuth2Client = new OAuth2Client()
 const Index = require("../Index")
 const env = require("../Environment")
 const admin = require("./Admin")
+const { UnauthorizedError } = require("../SelfDefinedError")
 
 const verify = async (res, query) => {
     const user = await require("../Index").instance.dUsers.findOne(query)
     if (user) {
         const token = jwt.sign({
-            role: user.role
+            role: user.role,
+            iat: Date.now()
         }, env.SecretKey, {
             expiresIn: env.Expires
         })
@@ -45,7 +47,7 @@ api.post("/google", async (req, res, next) => {
 
         this.verify(res, { google: ticket.getUserId() })
     } catch {
-        next(new Error("Unauthorized"))
+        next(new UnauthorizedError())
     }
 })
 

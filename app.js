@@ -1,3 +1,1 @@
-const Index = require("./app/Index")
-
-const app = new Index(process)
+console.log(__dirname)

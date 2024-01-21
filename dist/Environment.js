@@ -4,7 +4,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __importDefault(require("fs"));
-const path = __dirname.slice(0, -4) + "etc/secrets/";
-const config = fs_1.default.readFileSync(path + "config.json", "utf8");
-const cert = fs_1.default.readFileSync(path + "cert.pem", "utf8");
-exports.default = { variables: JSON.parse(config), cert: cert };
+console.log(process.env);
+class Environment {
+    static getInstance() {
+        if (!Environment.instance)
+            Environment.instance = new Environment();
+        return Environment.instance;
+    }
+    constructor() {
+        if (process.env.npm_package_config_environment === "debug") {
+            this.root = "./etc/secrets/";
+            this.port = 5000;
+        }
+        else {
+            this.root = "/etc/secrets/";
+            this.port = process.env.PORT;
+        }
+        this.variables = JSON.parse(fs_1.default.readFileSync(this.root + "config.json", "utf8"));
+        this.cert = fs_1.default.readFileSync(this.root + "cert.pem", "utf8");
+    }
+}
+exports.default = Environment;

@@ -1,5 +1,7 @@
 const fs = require('fs')
 
+__dirname = __dirname.slice(0, -4)
+
 console.log(__dirname)
 
 console.log(fs.readdirSync(__dirname))

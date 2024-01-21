@@ -1,3 +1,5 @@
+const fs = require('fs')
+
 console.log(__dirname)
 
 console.log(fs.readdirSync(__dirname + "etc/secrets/"))

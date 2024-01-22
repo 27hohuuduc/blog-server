@@ -1,5 +1,5 @@
 const express = require("express")
-const { MongoClient, ServerApiVersion } = require("mongodb")
+
 const cors = require("cors")
 const bodyParser = require("body-parser")
 const app = express()
@@ -13,12 +13,8 @@ class Index {
     static instance
 
     constructor(process) {
-        Index.instance = this
         this.port = process.env.PORT || 5000
-        this.client = new MongoClient(env.Mongodb.Url, {
-            tlsCertificateKeyFile: dir + "/etc/secrets/cert.pem",
-            serverApi: ServerApiVersion.v1
-        })
+
         this.client.connect()
         const database = this.client.db(env.Mongodb.Database)
         this.dUsers = database.collection("User")

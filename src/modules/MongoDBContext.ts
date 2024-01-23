@@ -2,10 +2,22 @@ import { Collection, MongoClient, ServerApiVersion } from "mongodb"
 import Environment from "../Environment"
 import Singleton from "../Singleton"
 
+export interface User {
+    role: string,
+    pass: string[],
+    google: string[],
+    valid_date: number
+}
+
+export interface Content {
+    header: string
+    body: string
+}
+
 export default class MongoDBContext {
 
-    users: Collection
-    contents: Collection
+    users: Collection<User>
+    contents: Collection<Content>
 
     constructor() {
         const env = Singleton.getInstance(Environment)
@@ -15,7 +27,7 @@ export default class MongoDBContext {
         })
         client.connect()
         const database = client.db(env.variables.Mongodb.database)
-        this.users = database.collection("User")
-        this.contents = database.collection("Contents")
+        this.users = database.collection<User>("User")
+        this.contents = database.collection<Content>("Contents")
     }
 }

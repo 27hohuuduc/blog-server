@@ -1,6 +1,6 @@
 import fs from "fs"
 
-type Config = {
+export type Config = {
     GitHub: {
         owner: string,
         repo: string,
